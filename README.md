@@ -7,3 +7,11 @@ per installare utilizza
 ```
 npm run ins
 ```
+
+e poi per usarlo 
+
+```
+virtuale-api
+```
+
+palese e' super grezzo :3
