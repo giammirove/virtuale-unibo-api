@@ -1,5 +1,5 @@
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
-const { sanitizeName, readInput, setCookieToFile } = require("./utils");
+const { printInfo, printError, readInput, setCookieToFile, getCookieFromFile } = require("./utils");
 
 
 const LOGIN = "https://virtuale.unibo.it/login/index.php"
@@ -30,12 +30,17 @@ function getSAMLResponse(body) {
 
 async function login(user, pass) {
     try {
-        console.log("Login");
-        if(!user || !pass) {
+        return await getCookieFromFile();
+    } catch (e) {
+        printError("Cookie non trovati o invalidi!");
+    }
+    try {
+        printInfo("Login");
+        if (!user || !pass) {
             user = await readInput("Inserisci il tuo username : ");
-            pass = await readInput("Inserisci la tua password : " );
+            pass = await readInput("Inserisci la tua password : ");
         }
-        
+
         cookie = "";
         let res = await fetch(LOGIN, {
             "redirect": "manual"
@@ -89,7 +94,6 @@ async function login(user, pass) {
         let authUrl = res.url;
         cookie += "; " + res.headers.get("set-cookie");
 
-        //console.log(authUrl)
         res = await fetch(authUrl, {
             "headers": {
                 "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -114,7 +118,6 @@ async function login(user, pass) {
         location = res.headers.get("location");
         let msis = getMSISAuth(res);
 
-        //console.log(location)
         res = await fetch(location, {
             "headers": {
                 "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -170,7 +173,6 @@ async function login(user, pass) {
         location = res.headers.get("location");
 
 
-        //console.log(location)
         res = await fetch(location, {
             "headers": {
                 "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -193,11 +195,11 @@ async function login(user, pass) {
 
         SESSION_COOKIE = res.headers.get("set-cookie").replace(/,/gm, ";") + ";";
 
-        console.log("[-] Login completato!");
+        printInfo("Login completato!");
         setCookieToFile(SESSION_COOKIE);
         return SESSION_COOKIE;
     } catch (e) {
-        console.log(e);
+        printError(e);
     }
 }
 

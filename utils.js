@@ -3,7 +3,7 @@ const fs = require("fs")
 let COOKIE_FILE = 'cookie.json'
 
 function readInput(txt) {
-    console.log(txt);
+    printQuestion(txt);
     return new Promise((resolve, reject) => {
         process.stdin.on('data', data => {
             resolve(data.toString().replace(/\n/gm, ""));
@@ -37,7 +37,19 @@ async function setCookieToFile(cookie) {
     }
 }
 
+function printInfo(text) {
+    console.log(`[-] ${text}`)
+}
+
+function printError(text) {
+    console.log(`[x] ${text}`)
+}
+
+function printQuestion(text) {
+    console.log(`[?] ${text}`)
+}
+
 
 module.exports = {
-    sanitizeName, readInput, getCookieFromFile, setCookieToFile
+    sanitizeName, readInput, getCookieFromFile, setCookieToFile, printInfo, printError, printQuestion
 }

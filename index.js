@@ -7,7 +7,7 @@ const fs = require("fs")
 
 
 const { login } = require("./login")
-const {sanitizeName, readInput, getCookieFromFile} = require("./utils");
+const { printInfo, printError, sanitizeName, readInput } = require("./utils");
 
 
 const LOGIN = "https://virtuale.unibo.it/login/index.php"
@@ -39,7 +39,7 @@ function getLabelFromElement(el) {
 
 async function getData(courseName, link, id) {
     try {
-        console.log(`Hai scelto ${courseName}`);
+        printInfo(`Hai scelto '${courseName}'`);
 
         let res = await fetch(link, {
             "headers": {
@@ -63,7 +63,7 @@ async function getData(courseName, link, id) {
             let elements = getSectionElements(sec);
             if (title != undefined && sec) {
                 let s = JSON.parse(`{"title":"${title}","elements":[]}`);
-                console.log(`${i}. ${title}`);
+                printInfo(`${i}. ${title}`);
                 for (var j = 0; j < elements.length; j++) {
                     let link = getLinkFromElement(elements[j]);
                     let label = getLabelFromElement(elements[j]);
@@ -72,16 +72,16 @@ async function getData(courseName, link, id) {
                             let e = JSON.parse(`{"label":"${label}", "link":"${link}"}`);
                             s.elements.push(e);
                         } catch (e) {
-                            console.log(`Mhhh error qua : ${label}`);
+                            printError(`Mhhh error qua : ${label}`);
                         }
                     }
-                    //console.log("\t" + label)
+                    //printInfo("\t" + label)
                     //await getFile(name, title, link);
                 }
                 sections_json.push(s);
             }
         }
-        console.log(`${sections.length}. Tutto`);
+        printInfo(`${sections.length}. Tutto`);
 
         let d = await readInput("Quale sezione vuoi scaricare? :");
         if (d >= sections_json.length) {
@@ -90,16 +90,16 @@ async function getData(courseName, link, id) {
             await downloadSection(courseName, sections_json[d]);
         }
 
-        console.log("[-] Download terminato!");
+        printInfo("Download terminato!");
         await getCourses();
     } catch (e) {
-        console.log(e);
+        printError(e);
     }
 }
 
 async function downloadAllSections(courseName, sections) {
     try {
-        console.log(`Scarico tutto da : ${courseName}`);
+        printInfo(`Scarico tutto da : ${courseName}`);
         for (var i = 0; i < sections.length; i++) {
             await downloadSection(courseName, sections[i]);
         }
@@ -110,9 +110,9 @@ async function downloadAllSections(courseName, sections) {
 
 async function downloadSection(courseName, section) {
     try {
-        console.log(`Scarico : ${section.title}`);
+        printInfo(`Scarico : ${section.title}`);
         for (var i = 0; i < section.elements.length; i++) {
-            console.log(`\t${section.elements[i].label}`);
+            printInfo(`\t${section.elements[i].label}`);
             await getFile(courseName, section.title, section.elements[i].link);
         }
     } catch (e) {
@@ -167,7 +167,7 @@ async function getFile(course, sectionName, url) {
 
         }
     } catch (e) {
-        console.log(e)
+        printInfo(e)
     }
 }
 
@@ -232,34 +232,32 @@ async function getCourses() {
 
         let courses = json[0].data.courses
 
-        console.log("\nCORSI TROVATI");
+        printInfo("CORSI TROVATI");
         for (var i = 0; i < courses.length; i++) {
             let name = courses[i].fullname;
             let link = courses[i].viewurl;
             let id = courses[i].id;
 
-            console.log(`${i}. (${id}) ${name}`);
+            printInfo(`${i}. (${id}) ${name}`);
         }
 
 
-        let data = await readInput("\nQuale corso vuoi navigare? : ");
+        let data = await readInput("Quale corso vuoi navigare? : ");
 
         await getData(courses[data].fullname, courses[data].viewurl, courses[data].id);
 
 
     } catch (e) {
-        console.log(e);
+        printError(e);
     }
 }
 
 
 async function menu() {
     try {
-        SESSION_COOKIE = await getCookieFromFile();
-        console.log("Sessione recuperata!");
+        SESSION_COOKIE = await login();
         await getCourses();
     } catch (e) {
-        await login();
         await menu();
     }
 }
