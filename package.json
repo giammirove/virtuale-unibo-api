@@ -1,6 +1,11 @@
 {
+  "name": "virtuale-api",
+  "author":"giammirove",
   "dependencies": {
     "jsdom": "^19.0.0",
     "node-fetch": "^3.2.4"
+  },
+  "scripts":{
+    "install": "sudo npm i -g ."
   }
 }
