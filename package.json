@@ -6,6 +6,9 @@
     "node-fetch": "^3.2.4"
   },
   "scripts":{
-    "install": "sudo npm i -g ."
+    "ins": "sudo npm i ."
+  },
+  "bin": {
+    "virtuale-api": "./index.js"
   }
 }
