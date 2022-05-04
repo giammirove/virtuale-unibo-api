@@ -1,12 +1,12 @@
 {
   "name": "virtuale-api",
-  "author":"giammirove",
+  "author": "giammirove",
   "dependencies": {
     "jsdom": "^19.0.0",
     "node-fetch": "^3.2.4"
   },
-  "scripts":{
-    "ins": "sudo npm i ."
+  "scripts": {
+    "ins": "npm i; sudo npm i -g ."
   },
   "bin": {
     "virtuale-api": "./index.js"
