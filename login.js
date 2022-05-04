@@ -1,8 +1,12 @@
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
-const { printInfo, printError, readInput, setCookieToFile, getCookieFromFile } = require("./utils");
+const fs = require("fs")
+const { printInfo, printError, readInput } = require("./utils");
 
 
 const LOGIN = "https://virtuale.unibo.it/login/index.php"
+let COOKIE_FILE = __dirname+ '/cookie.json'
+
+
 
 function getClientRequestId(body) {
     let reg = (/(&client-request-id=.*?)"/gm)
@@ -26,6 +30,28 @@ function getSAMLResponse(body) {
         return res[1];
     }
     throw "SAML RESPONSE not found!"
+}
+
+async function getCookieFromFile() {
+    try {
+        if (fs.existsSync(COOKIE_FILE)) {
+            let json = JSON.parse(fs.readFileSync(COOKIE_FILE));
+            return json.cookie;
+        } else {
+            throw "Cookie non trovati!";
+        }
+    } catch (e) {
+        throw e;
+    }
+}
+
+async function setCookieToFile(cookie) {
+    try {
+        let json = JSON.parse(`{"cookie":"${cookie}"}`)
+        fs.writeFileSync(COOKIE_FILE, JSON.stringify(json));
+    } catch (e) {
+        throw e;
+    }
 }
 
 async function login(user, pass) {

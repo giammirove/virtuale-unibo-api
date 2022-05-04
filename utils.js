@@ -1,7 +1,3 @@
-const fs = require("fs")
-
-let COOKIE_FILE = 'cookie.json'
-
 function readInput(txt) {
     printQuestion(txt);
     return new Promise((resolve, reject) => {
@@ -13,28 +9,6 @@ function readInput(txt) {
 
 function sanitizeName(n) {
     return n.replace(/ /gm, "_").replace(/"/gm, '\"').replace(/'/gm, "_").replace(/,/gm, "_").replace(/:/gm, "_");
-}
-
-async function getCookieFromFile() {
-    try {
-        if (fs.existsSync(COOKIE_FILE)) {
-            let json = JSON.parse(fs.readFileSync(COOKIE_FILE));
-            return json.cookie;
-        } else {
-            throw "Cookie non trovati!";
-        }
-    } catch (e) {
-        throw e;
-    }
-}
-
-async function setCookieToFile(cookie) {
-    try {
-        let json = JSON.parse(`{"cookie":"${cookie}"}`)
-        fs.writeFileSync(COOKIE_FILE, JSON.stringify(json));
-    } catch (e) {
-        throw e;
-    }
 }
 
 function printInfo(text) {
@@ -51,5 +25,5 @@ function printQuestion(text) {
 
 
 module.exports = {
-    sanitizeName, readInput, getCookieFromFile, setCookieToFile, printInfo, printError, printQuestion
+    sanitizeName, readInput, printInfo, printError, printQuestion
 }
