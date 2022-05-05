@@ -6,7 +6,7 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 const fs = require("fs")
 
 
-const { login } = require("./login")
+const { login, resetCookieToFile } = require("./login")
 const { printInfo, printError, sanitizeName, readInput } = require("./utils");
 
 
@@ -248,7 +248,7 @@ async function getCourses() {
 
 
     } catch (e) {
-        printError(e);
+        throw (e);
     }
 }
 
@@ -258,6 +258,8 @@ async function menu() {
         SESSION_COOKIE = await login();
         await getCourses();
     } catch (e) {
+        printError(e);
+        await resetCookieToFile();
         await menu();
     }
 }

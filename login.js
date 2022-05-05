@@ -4,7 +4,7 @@ const { printInfo, printError, readInput } = require("./utils");
 
 
 const LOGIN = "https://virtuale.unibo.it/login/index.php"
-let COOKIE_FILE = __dirname+ '/cookie.json'
+let COOKIE_FILE = __dirname + '/cookie.json'
 
 
 
@@ -54,9 +54,21 @@ async function setCookieToFile(cookie) {
     }
 }
 
+async function resetCookieToFile() {
+    try {
+        let json = JSON.parse(`{"cookie":""}`)
+        fs.writeFileSync(COOKIE_FILE, JSON.stringify(json));
+    } catch (e) {
+        throw e;
+    }
+}
+
+
 async function login(user, pass) {
     try {
-        return await getCookieFromFile();
+        let c = await getCookieFromFile();
+        if (c != undefined && c != "")
+            return c;
     } catch (e) {
         printError("Cookie non trovati o invalidi!");
     }
@@ -225,10 +237,10 @@ async function login(user, pass) {
         setCookieToFile(SESSION_COOKIE);
         return SESSION_COOKIE;
     } catch (e) {
-        printError(e);
+        throw(e);
     }
 }
 
 module.exports = {
-    login
+    login, resetCookieToFile
 }
