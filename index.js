@@ -13,7 +13,7 @@ const { printInfo, printError, sanitizeName, readInput } = require("./utils");
 const LOGIN = "https://virtuale.unibo.it/login/index.php"
 const MY = "https://virtuale.unibo.it/my/"
 let SESSION_COOKIE = '';
-let DIR = "data"
+let DIR = __dirname + "/data"
 
 
 function getSections(dom) {
